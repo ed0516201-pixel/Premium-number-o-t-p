@@ -2,19 +2,35 @@
 
 import { Sidebar } from "./sidebar"
 import { Header } from "./header"
+import { SidebarProvider, useSidebar } from "@/lib/sidebar-context"
+import { motion } from "framer-motion"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+function DashboardContent({ children }: DashboardLayoutProps) {
+  const { collapsed } = useSidebar()
+
   return (
     <div className="min-h-screen bg-background">
       <Sidebar />
-      <div className="pl-[280px] transition-all duration-200">
+      <motion.div
+        initial={false}
+        animate={{ paddingLeft: collapsed ? 80 : 280 }}
+        transition={{ duration: 0.2, ease: "easeInOut" }}
+      >
         <Header />
         <main className="p-6">{children}</main>
-      </div>
+      </motion.div>
     </div>
+  )
+}
+
+export function DashboardLayout({ children }: DashboardLayoutProps) {
+  return (
+    <SidebarProvider>
+      <DashboardContent>{children}</DashboardContent>
+    </SidebarProvider>
   )
 }
